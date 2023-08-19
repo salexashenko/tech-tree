@@ -1,10 +1,10 @@
+
 // Fetch the tech tree data from techTree.json
 fetch('techTree.json')
     .then(response => response.json())
     .then(data => {
         const techData = data;
         const rootNodes = techData.filter(item => item.dependencies.length === 0).map(item => '#' + item.id).join(', ');
-
         // Initialize Cytoscape
         const cy = cytoscape({
             container: document.getElementById('cy'),
@@ -53,18 +53,22 @@ fetch('techTree.json')
             node.addClass('highlighted');
         });
 
-    });
 
+        cy.on('tap', 'node', function (evt) {
+            let node = evt.target;
+            cy.elements().removeClass('highlighted');
+            node.connectedEdges().addClass('highlighted');
+            node.addClass('highlighted');
+        });
+
+
+    });
 function createElements(data) {
-    const a = 3.0;
-    const b = 1760001;
     let elements = [];
 
     data.forEach(item => {
-        let y = a * Math.log10(item.year + b);
         elements.push({
-            data: { id: item.id, label: item.label },
-            position: { y: y }
+            data: { id: item.id, label: item.label }
         });
 
         item.dependencies.forEach(dep => {
