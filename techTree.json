@@ -20,7 +20,7 @@
         "id": "spear",
         "label": "Spears",
         "dependencies": [
-            "flintknapping",
+            "flint_knapping",
             "fire"
         ]
     },
@@ -28,7 +28,7 @@
         "id": "bow_and_arrow",
         "label": "Bow and Arrow",
         "dependencies": [
-            "flintknapping"
+            "flint_knapping"
         ]
     },
     {
@@ -174,6 +174,26 @@
     {
         "id": "urbanization",
         "label": "Urbanization",
+        "dependencies": []
+    },
+    {
+        "id": "copper_smelting",
+        "label": "Copper Smelting",
+        "dependencies": []
+    },
+    {
+        "id": "tin_mining",
+        "label": "Tin Mining",
+        "dependencies": []
+    },
+    {
+        "id": "wheel",
+        "label": "Wheel",
+        "dependencies": []
+    },
+    {
+        "id": "metallurgy",
+        "label": "Metallurgy",
         "dependencies": []
     }
 ]
