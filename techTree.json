@@ -10,7 +10,7 @@
         "dependencies": []
     },
     {
-        "id": "flintknapping",
+        "id": "flint_knapping",
         "label": "Flint Knapping",
         "dependencies": [
             "handaxe"
@@ -25,7 +25,7 @@
         ]
     },
     {
-        "id": "bowandarrow",
+        "id": "bow_and_arrow",
         "label": "Bow and Arrow",
         "dependencies": [
             "flintknapping"
@@ -65,11 +65,11 @@
         ]
     },
     {
-        "id": "grindingstone",
+        "id": "grinding_stone",
         "label": "Grinding Stone",
         "dependencies": [
             "agriculture",
-            "flintknapping"
+            "flint_knapping"
         ]
     },
     {
@@ -91,7 +91,7 @@
         "label": "Fishhook",
         "dependencies": [
             "fishing",
-            "flintknapping"
+            "flint_knapping"
         ]
     },
     {
@@ -110,10 +110,70 @@
         ]
     },
     {
-        "id": "burialpractices",
+        "id": "burial_practices",
         "label": "Burial Practices",
         "dependencies": [
             "shelter"
         ]
+    },
+    {
+        "id": "bronze_smelting",
+        "label": "Bronze Smelting",
+        "dependencies": [
+            "copper_smelting",
+            "tin_mining"
+        ]
+    },
+    {
+        "id": "pottery_wheel",
+        "label": "Pottery Wheel",
+        "dependencies": []
+    },
+    {
+        "id": "sailing",
+        "label": "Sailing",
+        "dependencies": []
+    },
+    {
+        "id": "chariots",
+        "label": "Chariots",
+        "dependencies": [
+            "wheel",
+            "domestication"
+        ]
+    },
+    {
+        "id": "early_writing_systems",
+        "label": "Early Writing Systems",
+        "dependencies": []
+    },
+    {
+        "id": "irrigation",
+        "label": "Irrigation",
+        "dependencies": []
+    },
+    {
+        "id": "plow",
+        "label": "Plow",
+        "dependencies": []
+    },
+    {
+        "id": "lost_wax_casting",
+        "label": "Lost Wax Casting",
+        "dependencies": [
+            "bronze_smelting"
+        ]
+    },
+    {
+        "id": "alloys",
+        "label": "Metal Alloys",
+        "dependencies": [
+            "metallurgy"
+        ]
+    },
+    {
+        "id": "urbanization",
+        "label": "Urbanization",
+        "dependencies": []
     }
 ]
