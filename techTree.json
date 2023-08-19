@@ -2,19 +2,22 @@
     {
         "id": "handaxe",
         "label": "Handaxe",
-        "dependencies": []
+        "dependencies": [],
+        "year": -1760000
     },
     {
         "id": "fire",
         "label": "Control of Fire",
-        "dependencies": []
+        "dependencies": [],
+        "year": -1000000
     },
     {
         "id": "flint_knapping",
         "label": "Flint Knapping",
         "dependencies": [
             "handaxe"
-        ]
+        ],
+        "year": -1760000
     },
     {
         "id": "spear",
@@ -22,47 +25,54 @@
         "dependencies": [
             "flint_knapping",
             "fire"
-        ]
+        ],
+        "year": -400000
     },
     {
         "id": "bow_and_arrow",
         "label": "Bow and Arrow",
         "dependencies": [
             "flint_knapping"
-        ]
+        ],
+        "year": -64000
     },
     {
         "id": "fishing",
         "label": "Fishing Techniques",
         "dependencies": [
             "spear"
-        ]
+        ],
+        "year": -40000
     },
     {
         "id": "clothing",
         "label": "Basic Clothing",
         "dependencies": [
             "weaving"
-        ]
+        ],
+        "year": -100000
     },
     {
         "id": "pottery",
         "label": "Pottery",
         "dependencies": [
             "fire"
-        ]
+        ],
+        "year": -29000
     },
     {
         "id": "domestication",
         "label": "Animal Domestication",
-        "dependencies": []
+        "dependencies": [],
+        "year": -10000
     },
     {
         "id": "agriculture",
         "label": "Agriculture",
         "dependencies": [
             "domestication"
-        ]
+        ],
+        "year": -12000
     },
     {
         "id": "grinding_stone",
@@ -70,21 +80,24 @@
         "dependencies": [
             "agriculture",
             "flint_knapping"
-        ]
+        ],
+        "year": -60000
     },
     {
         "id": "weaving",
         "label": "Weaving",
         "dependencies": [
             "agriculture"
-        ]
+        ],
+        "year": -12000
     },
     {
         "id": "basketry",
         "label": "Basketry",
         "dependencies": [
             "weaving"
-        ]
+        ],
+        "year": -8000
     },
     {
         "id": "fishhook",
@@ -92,7 +105,8 @@
         "dependencies": [
             "fishing",
             "flint_knapping"
-        ]
+        ],
+        "year": -16000
     },
     {
         "id": "shelter",
@@ -100,21 +114,24 @@
         "dependencies": [
             "handaxe",
             "fire"
-        ]
+        ],
+        "year": -400000
     },
     {
         "id": "rockart",
         "label": "Rock Art",
         "dependencies": [
             "handaxe"
-        ]
+        ],
+        "year": -400000
     },
     {
         "id": "burial_practices",
         "label": "Burial Practices",
         "dependencies": [
             "shelter"
-        ]
+        ],
+        "year": -100000
     },
     {
         "id": "bronze_smelting",
@@ -122,17 +139,14 @@
         "dependencies": [
             "copper_smelting",
             "tin_mining"
-        ]
-    },
-    {
-        "id": "pottery_wheel",
-        "label": "Pottery Wheel",
-        "dependencies": []
+        ],
+        "year": -3500
     },
     {
         "id": "sailing",
         "label": "Sailing",
-        "dependencies": []
+        "dependencies": [],
+        "year": -5500
     },
     {
         "id": "chariots",
@@ -140,29 +154,30 @@
         "dependencies": [
             "wheel",
             "domestication"
-        ]
+        ],
+        "year": -3000
     },
     {
         "id": "early_writing_systems",
         "label": "Early Writing Systems",
-        "dependencies": []
+        "dependencies": [],
+        "year": -3500
     },
     {
         "id": "irrigation",
         "label": "Irrigation",
-        "dependencies": []
+        "dependencies": [
+            "agriculture"
+        ],
+        "year": -6000
     },
     {
         "id": "plow",
         "label": "Plow",
-        "dependencies": []
-    },
-    {
-        "id": "lost_wax_casting",
-        "label": "Lost Wax Casting",
         "dependencies": [
-            "bronze_smelting"
-        ]
+            "agriculture"
+        ],
+        "year": -4000
     },
     {
         "id": "alloys",
@@ -174,26 +189,33 @@
     {
         "id": "urbanization",
         "label": "Urbanization",
-        "dependencies": []
+        "dependencies": [
+            "shelter",
+            "agriculture"
+        ]
     },
     {
         "id": "copper_smelting",
         "label": "Copper Smelting",
-        "dependencies": []
+        "dependencies": [],
+        "year": -5000
     },
     {
         "id": "tin_mining",
         "label": "Tin Mining",
-        "dependencies": []
+        "dependencies": [],
+        "year": -3500
     },
     {
         "id": "wheel",
         "label": "Wheel",
-        "dependencies": []
+        "dependencies": [],
+        "year": -3500
     },
     {
         "id": "metallurgy",
         "label": "Metallurgy",
-        "dependencies": []
+        "dependencies": [],
+        "year": -6000
     }
 ]
