@@ -277,5 +277,132 @@
             "siege_engines"
         ],
         "year": 1320
+    },
+    {
+        "id": "scavenging",
+        "label": "Scavenging",
+        "dependencies": [],
+        "year": -2000000
+    },
+    {
+        "id": "primitive_hunting",
+        "label": "Primitive Hunting",
+        "dependencies": [
+            "scavenging",
+            "handaxe"
+        ],
+        "year": -1500000
+    },
+    {
+        "id": "primitive_fishing",
+        "label": "Primitive Fishing",
+        "dependencies": [
+            "scavenging"
+        ],
+        "year": -1000000
+    },
+    {
+        "id": "trapping",
+        "label": "Trapping",
+        "dependencies": [
+            "primitive_hunting",
+            "handaxe"
+        ],
+        "year": -300000
+    },
+    {
+        "id": "spear_fishing",
+        "label": "Spear Fishing",
+        "dependencies": [
+            "spear",
+            "primitive_fishing"
+        ],
+        "year": -250000
+    },
+    {
+        "id": "crop_cultivation",
+        "label": "Crop Cultivation",
+        "dependencies": [
+            "domestication",
+            "grinding_stone"
+        ],
+        "year": -10000
+    },
+    {
+        "id": "animal_husbandry",
+        "label": "Animal Husbandry",
+        "dependencies": [
+            "domestication"
+        ],
+        "year": -9000
+    },
+    {
+        "id": "net_fishing",
+        "label": "Net Fishing",
+        "dependencies": [
+            "weaving",
+            "spear_fishing"
+        ],
+        "year": -8300
+    },
+    {
+        "id": "angling",
+        "label": "Angling",
+        "dependencies": [
+            "weaving",
+            "primitive_fishing"
+        ],
+        "year": -2000
+    },
+    {
+        "id": "plow_agriculture",
+        "label": "Plow Agriculture",
+        "dependencies": [
+            "crop_cultivation",
+            "plow"
+        ],
+        "year": -3000
+    },
+    {
+        "id": "iron_plow",
+        "label": "Iron Plow",
+        "dependencies": [
+            "plow_agriculture",
+            "iron_smelting"
+        ],
+        "year": -500
+    },
+    {
+        "id": "crop_rotation",
+        "label": "Crop Rotation",
+        "dependencies": [
+            "plow_agriculture"
+        ],
+        "year": 600
+    },
+    {
+        "id": "windmill",
+        "label": "Windmill",
+        "dependencies": [
+            "plow_agriculture"
+        ],
+        "year": 1100
+    },
+    {
+        "id": "mechanized_farming",
+        "label": "Mechanized Farming",
+        "dependencies": [
+            "plow_agriculture"
+        ],
+        "year": 1700
+    },
+    {
+        "id": "fertilizer",
+        "label": "Fertilizer",
+        "dependencies": [
+            "crop_rotation",
+            "mechanized_farming"
+        ],
+        "year": 1840
     }
 ]
