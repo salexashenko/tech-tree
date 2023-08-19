@@ -11,9 +11,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         style: {
                             'label': 'data(label)',
                             'text-valign': 'center',
-                            'text-halign': 'right',
+                            'text-halign': 'center',
                             'background-color': '#888',
-                            'color': '#fff'
+                            'color': '#000',
+                            'width': 'label',
+                            'height': 'label',
+                            'padding': '10px'
                         }
                     },
                     {
@@ -27,12 +30,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 ],
                 layout: {
-                    name: 'preset'
+                    name: 'dagre'
                 }
             });
 
             cy.on('tap', 'node', function (evt) {
                 let node = evt.target;
+                cy.elements().style({ 'background-color': '#888', 'line-color': '#888', 'color': '#000' });
                 node.connectedEdges().style('line-color', '#f00');
                 node.style('background-color', '#f00');
             });
@@ -40,13 +44,13 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function createElements(data) {
-    const a = 3.0;
+    const a = 30.0;  // scaling factor for better spacing
     const b = 1760001;
     let nodes = [];
     let edges = [];
     for (let item of data) {
         let y = a * Math.log10(item.year + b);
-        nodes.push({ data: { id: item.id, label: item.label }, position: { x: 0, y: y } });
+        nodes.push({ data: { id: item.id, label: item.label }, position: { x: 0, y: -y } });  // inverted y for correct chronological order
         for (let dep of item.dependencies) {
             edges.push({ data: { source: dep, target: item.id } });
         }
