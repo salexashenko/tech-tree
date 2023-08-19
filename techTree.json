@@ -56,7 +56,8 @@
         "id": "pottery",
         "label": "Pottery",
         "dependencies": [
-            "fire"
+            "fire",
+            "wheel"
         ],
         "year": -29000
     },
@@ -138,15 +139,10 @@
         "label": "Bronze Smelting",
         "dependencies": [
             "copper_smelting",
-            "tin_mining"
+            "tin_mining",
+            "alloys"
         ],
         "year": -3500
-    },
-    {
-        "id": "sailing",
-        "label": "Sailing",
-        "dependencies": [],
-        "year": -5500
     },
     {
         "id": "chariots",
@@ -197,7 +193,10 @@
     {
         "id": "copper_smelting",
         "label": "Copper Smelting",
-        "dependencies": [],
+        "dependencies": [
+            "metallurgy",
+            "fire"
+        ],
         "year": -5000
     },
     {
@@ -215,7 +214,18 @@
     {
         "id": "metallurgy",
         "label": "Metallurgy",
-        "dependencies": [],
+        "dependencies": [
+            "fire"
+        ],
         "year": -6000
+    },
+    {
+        "id": "canoe",
+        "label": "Canoe",
+        "dependencies": [
+            "handaxe",
+            "shelter"
+        ],
+        "year": -8000
     }
 ]
