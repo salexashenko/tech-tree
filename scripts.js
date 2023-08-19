@@ -35,10 +35,11 @@ fetch('techTree.json')
                     'text-outline-color': '#FFD700'
                 }
             }],
+
             layout: {
                 name: 'breadthfirst',
                 directed: true,
-                spacingFactor: 1.25,
+                spacingFactor: 1.5, // Increased spacing
                 roots: rootNodes
             }
         });
@@ -49,8 +50,17 @@ fetch('techTree.json')
             node.connectedEdges().addClass('highlighted');
             node.addClass('highlighted');
         });
-    });
 
+
+        cy.on('tap', 'node', function (evt) {
+            let node = evt.target;
+            cy.elements().removeClass('highlighted');
+            node.connectedEdges().addClass('highlighted');
+            node.addClass('highlighted');
+        });
+
+
+    });
 function createElements(data) {
     let elements = [];
 
