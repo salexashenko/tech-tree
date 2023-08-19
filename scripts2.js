@@ -38,11 +38,12 @@ fetch('techTree.json')
             }],
 
             layout: {
-                name: 'breadthfirst',
-                directed: true,
-                spacingFactor: 1.5, // Increased spacing
-                roots: rootNodes
+                name: 'dagre',
+                rankDir: 'BT',  // Bottom-to-top direction
+                nodeDimensionsIncludeLabels: true,  // Ensures the labels are considered for layout spacing
+                spacingFactor: 1.5  // Adjust as needed for desired spacing
             }
+
         });
 
         cy.on('tap', 'node', function (evt) {
