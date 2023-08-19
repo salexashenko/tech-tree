@@ -227,5 +227,55 @@
             "shelter"
         ],
         "year": -8000
+    },
+    {
+        "id": "iron_smelting",
+        "label": "Iron Smelting",
+        "dependencies": [
+            "copper_smelting"
+        ],
+        "year": -1200
+    },
+    {
+        "id": "blacksmithing",
+        "label": "Blacksmithing",
+        "dependencies": [
+            "iron_smelting"
+        ],
+        "year": -1000
+    },
+    {
+        "id": "gunpowder",
+        "label": "Gunpowder",
+        "dependencies": [
+            "alchemy"
+        ],
+        "year": 850
+    },
+    {
+        "id": "alchemy",
+        "label": "Alchemy",
+        "dependencies": [
+            "metallurgy"
+        ],
+        "year": 300
+    },
+    {
+        "id": "siege_engines",
+        "label": "Siege Engines",
+        "dependencies": [
+            "blacksmithing"
+        ],
+        "year": 400
+    },
+    {
+        "id": "cannon",
+        "label": "Cannon",
+        "dependencies": [
+            "gunpowder",
+            "blacksmithing",
+            "siege_engines"
+        ],
+        "year": 1320
     }
 ]
