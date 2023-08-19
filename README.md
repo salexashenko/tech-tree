@@ -14,3 +14,6 @@ If you want to contribute and haven't used Github before:
 7. Click Commit changes
 8. If you are sure that you've done everything right, choose "commit directly". If not, choose the "create a pull request option" and somebody will review your changes. Write a short description of the changes as the commit message (super short, e.g. "fix fire year") and optionally a longer description if you're making big changes.
 9. Click commit and you're done!
+
+
+Discord: https://discord.gg/fyBKPdSXR
