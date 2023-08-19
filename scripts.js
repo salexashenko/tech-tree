@@ -4,6 +4,7 @@ fetch('techTree.json')
     .then(response => response.json())
     .then(data => {
         const techData = data;
+        const rootNodes = techData.filter(item => item.dependencies.length === 0).map(item => '#' + item.id).join(', ');
         // Initialize Cytoscape
         const cy = cytoscape({
             container: document.getElementById('cy'),
