@@ -222,7 +222,47 @@ router.get('/edges/:id', async (req, res) => {
 // Create a new edge
 router.post('/edges', authenticateJWT, [
     body('source_node_id').isInt(),
-    body('target_node_id').isInt()
+    body('target_node_id').isInt(),
+    // check that source_node_id and target_node_id are not the same
+    body('source_node_id').custom((value, { req }) => {
+        if (value === req.body.target_node_id) {
+            throw new Error('Source node and target node cannot be the same');
+        }
+        return true;
+    }),
+    // check that source_node_id and target_node_id are not already connected
+    body('source_node_id').custom(async (value, { req }) => {
+        const edge = await Edge.findOne({ where: { source_node_id: value, target_node_id: req.body.target_node_id } });
+        if (edge) {
+            throw new Error('Source node and target node are already connected');
+        }
+        return true;
+    }),
+    // check for circular reference
+    body('source_node_id').custom(async (value, { req }) => {
+        const edge = await Edge.findOne({ where: { source_node_id: req.body.target_node_id, target_node_id: value } });
+        if (edge) {
+            throw new Error('Source node and target node are already connected');
+        }
+        return true;
+    }),
+    // check that source_node_id and target_node_id exist
+    body('source_node_id').custom(async (value) => {
+        const node = await Node.findByPk(value);
+        if (!node) {
+            throw new Error('Source node does not exist');
+        }
+        return true;
+    }),
+    body('target_node_id').custom(async (value) => {
+        const node = await Node.findByPk(value);
+        if (!node) {
+            throw new Error('Target node does not exist');
+        }
+        return true;
+    })
+
+
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

@@ -2,14 +2,17 @@ import axios from 'axios';
 import cytoscape from 'cytoscape';
 import contextMenus from 'cytoscape-context-menus';
 import dagre from 'cytoscape-dagre';
+import edgehandles from 'cytoscape-edgehandles';
 import React, { useContext, useEffect, useState } from 'react';
 import CytoscapeComponent from 'react-cytoscapejs';
 import { TokenContext } from './Home';
 
+
+
 // import CSS as well
 import 'cytoscape-context-menus/cytoscape-context-menus.css';
 cytoscape.use(dagre);
-
+cytoscape.use(edgehandles);
 cytoscape.use(contextMenus);
 
 
@@ -22,7 +25,8 @@ const TechTree = () => {
     const [firstNodePosition, setFirstNodePosition] = useState(null);
     const [newNodeRelation, setNewNodeRelation] = useState(null); // can be 'source' or 'target'
     const token = useContext(TokenContext); // Assuming you're using Context API to store the token
-
+    const [creatingEdge, setCreatingEdge] = useState(false);
+    const [cursor, setCursor] = useState('pointer');
 
     const addEdge = async (source, target) => {
         try {
@@ -133,62 +137,6 @@ const TechTree = () => {
         }
     }, [elements]);
 
-    const options = {
-        // Customize event to bring up the context menu
-        // Possible options https://js.cytoscape.org/#events/user-input-device-events
-        evtType: 'cxttap',
-        // List of initial menu items
-        // A menu item must have either onClickFunction or submenu or both
-        menuItems: [
-            {
-                id: 'remove', // ID of menu item
-                content: 'remove', // Display content of menu item
-                tooltipText: 'remove', // Tooltip text for menu item
-                image: { src: "remove.svg", width: 12, height: 12, x: 6, y: 4 }, // menu icon
-                // Filters the elements to have this menu item on cxttap
-                // If the selector is not truthy no elements will have this menu item on cxttap
-                selector: 'node, edge',
-                onClickFunction: function () { // The function to be executed on click
-                    console.log('remove element');
-                },
-                disabled: false, // Whether the item will be created as disabled
-                show: false, // Whether the item will be shown or not
-                hasTrailingDivider: true, // Whether the item will have a trailing divider
-                coreAsWell: false // Whether core instance have this item on cxttap
-            },
-            {
-                id: 'hide',
-                content: 'hide',
-                tooltipText: 'hide',
-                selector: 'node, edge',
-                onClickFunction: function () {
-                    console.log('hide element');
-                },
-                disabled: true
-            },
-            {
-                id: 'add-node',
-                content: 'add node',
-                tooltipText: 'add node',
-                image: { src: "add.svg", width: 12, height: 12, x: 6, y: 4 },
-                selector: 'node',
-                coreAsWell: true,
-                onClickFunction: function () {
-                    console.log('add node');
-                }
-            }
-        ],
-        // css classes that menu items will have
-        menuItemClasses: [
-            // add class names to this list
-        ],
-        // css classes that context menu will have
-        contextMenuClasses: [
-            // add class names to this list
-        ],
-        // Indicates that the menu item has a submenu. If not provided default one will be used
-        submenuIndicator: { src: 'assets/submenu-indicator-default.svg', width: 12, height: 12 }
-    };
 
 
     const style = [{
@@ -217,6 +165,58 @@ const TechTree = () => {
             'target-arrow-color': '#FFD700',
             'color': '#000000',
             'text-outline-color': '#FFD700'
+        },
+    },
+    {
+        selector: '.eh-handle',
+        style: {
+            'background-color': 'red',
+            'width': 12,
+            'height': 12,
+            'shape': 'ellipse',
+            'overlay-opacity': 0,
+            'border-width': 12, // makes the handle easier to hit
+            'border-opacity': 0
+        }
+    },
+
+    {
+        selector: '.eh-hover',
+        style: {
+            'background-color': 'red'
+        }
+    },
+
+    {
+        selector: '.eh-source',
+        style: {
+            'border-width': 2,
+            'border-color': 'red'
+        }
+    },
+
+    {
+        selector: '.eh-target',
+        style: {
+            'border-width': 2,
+            'border-color': 'red'
+        }
+    },
+
+    {
+        selector: '.eh-preview, .eh-ghost-edge',
+        style: {
+            'background-color': 'red',
+            'line-color': 'red',
+            'target-arrow-color': 'red',
+            'source-arrow-color': 'red'
+        }
+    },
+
+    {
+        selector: '.eh-ghost-edge.eh-preview-active',
+        style: {
+            'opacity': 0
         }
     }];
 
@@ -255,21 +255,122 @@ const TechTree = () => {
                 container={cyRef.current}
                 elements={elements}
                 // layout={layout}
-                style={{ width: '2000px', height: '2000px' }}
+                style={{ width: '2000px', height: '2000px', cursor: cursor }}
                 stylesheet={style}
                 cy={(cy) => {
                     cyRef.current = cy;
                     cy.on('tap', 'node', function (evt) {
-                        if (creating) {
+                        if (creatingEdge === 'parent') {
                             addEdge(firstNode, evt.target.id());
-                            setCreating(false);
+                            setCreatingEdge(false);
                             setFirstNode(null);
+                            setCursor('pointer');
+                        } else if (creatingEdge === 'child') {
+                            addEdge(evt.target.id(), firstNode);
+                            setCreatingEdge(false);
+                            setFirstNode(null);
+                            setCursor('pointer');
                         } else {
                             cy.elements().removeClass('highlighted');
                             evt.target.connectedEdges().addClass('highlighted');
                             evt.target.addClass('highlighted');
                         }
                     });
+                    var eh = cy.edgehandles(
+                        {
+                            canConnect: function (sourceNode, targetNode) {
+                                //disallow loops
+                                //TODO add more checks here
+
+                                return !sourceNode.same(targetNode); // e.g. disallow loops
+                            },
+                            disableBrowserGestures: false,
+                        }
+                    );
+                    eh.enableDrawMode();
+                    const options = {
+                        // Customize event to bring up the context menu
+                        // Possible options https://js.cytoscape.org/#events/user-input-device-events
+                        evtType: 'cxttap',
+                        // List of initial menu items
+                        // A menu item must have either onClickFunction or submenu or both
+                        menuItems: [
+                            {
+                                id: 'add-child-node',
+                                content: 'Add New Child Tech',
+                                tooltipText: 'Add New Child Tech',
+                                selector: 'node',
+                                onClickFunction: function (event) {
+                                    const target = event.target || event.cyTarget;
+                                    console.log('add child node to ' + target.id());
+                                }
+                            },
+                            {
+                                id: 'add-parent-node',
+                                content: 'Add New Parent Tech',
+                                tooltipText: 'Add New Parent Tech',
+                                selector: 'node',
+                                onClickFunction: function (event) {
+                                    const target = event.target || event.cyTarget;
+                                    console.log('add parent node to ' + target.id());
+                                }
+                            },
+                            {
+                                id: 'add-child-edge',
+                                content: 'Link to Child Tech',
+                                tooltipText: 'Link to Child Tech',
+                                selector: 'node',
+                                onClickFunction: function (event) {
+                                    const target = event.target || event.cyTarget;
+                                    setCreatingEdge('child');
+                                    setCursor('crosshair');
+                                    setFirstNode(target.id());
+                                }
+                            },
+                            {
+                                id: 'add-parent-edge',
+                                content: 'Link to Parent Tech',
+                                tooltipText: 'Link to Parent Tech',
+                                selector: 'node',
+                                onClickFunction: function (event) {
+                                    const target = event.target || event.cyTarget;
+                                    setCreatingEdge('parent');
+                                    setCursor('crosshair');
+                                    setFirstNode(target.id());
+                                }
+                            },
+                            {
+                                id: 'draw-eh-link',
+                                content: 'Draw Link',
+                                tooltipText: 'Draw Link',
+                                selector: 'node',
+                                onClickFunction: function (event) {
+                                    eh.start(event.target || event.cyTarget);
+                                }
+                            },
+                            {
+                                id: 'remove',
+                                content: 'Remove',
+                                tooltipText: 'Remove',
+                                selector: 'node, edge',
+                                onClickFunction: function (event) {
+                                    const target = event.target || event.cyTarget;
+                                    console.log('remove ' + target.id());
+                                }
+                            }
+                        ],
+                        // css classes that menu items will have
+                        menuItemClasses: [
+                            // add class names to this list
+                        ],
+                        // css classes that context menu will have
+                        contextMenuClasses: [
+                            // add class names to this list
+                        ],
+                        // Indicates that the menu item has a submenu. If not provided default one will be used
+                        submenuIndicator: { src: 'assets/submenu-indicator-default.svg', width: 12, height: 12 }
+                    };
+
                     var instance = cy.contextMenus(options);
 
                     // cy.on('cxttap', 'node', function (evt) {
@@ -279,6 +380,13 @@ const TechTree = () => {
                     //     setFirstNodePosition(evt.target.position());
                     //     setCreating(true);
                     // });
+                    cy.on('ehcomplete', (event, sourceNode, targetNode, addedEdge) => {
+                        // delete addedEdge from cy
+                        console.log(addedEdge);
+                        cy.remove(addedEdge);
+                        //todo bug
+                        addEdge(targetNode.id(), sourceNode.id());
+                    });
 
                     cy.on('tap', function (evt) {
                         if (evt.target === cy && creating) {
@@ -290,6 +398,8 @@ const TechTree = () => {
                             }
                         }
                     });
+
+
 
                 }}
             />
