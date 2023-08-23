@@ -1,5 +1,4 @@
-const { Node, Edge } = require('./server');  // Replace with your actual Sequelize model imports
-
+const { Node, Edge } = require('./models');
 const populateDatabase = async () => {
   // Insert nodes
   const nodes = [
