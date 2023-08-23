@@ -90,8 +90,8 @@ const TechTree = () => {
         const cy = cyRef.current;
         const fetchData = async () => {
             try {
-                const nodeResponse = await axios.get('http://localhost:3001/api/nodes');
-                const edgeResponse = await axios.get('http://localhost:3001/api/edges');
+                const nodeResponse = await axios.get('/api/nodes');
+                const edgeResponse = await axios.get('/api/edges');
 
                 const nodeData = nodeResponse.data.map(node => ({
                     data: { id: node.id, label: node.label },

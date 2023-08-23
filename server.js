@@ -28,6 +28,6 @@ app.get('*', (req, res) => {
 // Initialize and Start Server
 init().then(() => {
     app.listen(port, () => {
-        console.log(`Server running on http://localhost:${port}`);
+        console.log(`Server running :)`);
     });
 });
