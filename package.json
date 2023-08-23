@@ -13,7 +13,7 @@
     "build": "npm run build:backend && npm run build:frontend",
     "start:backend": "node server.js",
     "start:frontend": "cd client && npm start",
-    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\""
+    "start": "npm run start:backend && npm run start:frontend"
   },
   "keywords": [],
   "author": "",
