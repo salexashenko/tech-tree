@@ -26,7 +26,7 @@ const TechTree = () => {
 
     const addEdge = async (source, target) => {
         try {
-            const response = await axios.post('http://localhost:3001/api/edges', {
+            const response = await axios.post('/api/edges', {
                 source_node_id: Number(source),
                 target_node_id: Number(target)
             });
@@ -53,7 +53,7 @@ const TechTree = () => {
     const addNode = async (label, year, position) => {
         try {
             // Send POST request to create a new node
-            const response = await axios.post('http://localhost:3001/api/nodes', {
+            const response = await axios.post('/api/nodes', {
                 label: label,
                 year: year
             });
