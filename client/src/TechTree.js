@@ -40,8 +40,8 @@ const TechTree = () => {
             const newEdgeElement = {
                 data: {
                     id: `edge${newEdge.id}`,
-                    source: newEdge.target_node_id,
-                    target: newEdge.source_node_id
+                    source: newEdge.source_node_id,
+                    target: newEdge.target_node_id
                 }
             };
 
@@ -103,7 +103,7 @@ const TechTree = () => {
                 }));
 
                 const edgeData = edgeResponse.data.map(edge => ({
-                    data: { id: `edge${edge.id}`, target: edge.source_node_id, source: edge.target_node_id }
+                    data: { id: `edge${edge.id}`, target: edge.target_node_id, source: edge.source_node_id }
                 }));
 
 
@@ -123,11 +123,11 @@ const TechTree = () => {
             const layout = cy.layout({
                 name: 'dagre',
                 animate: true,
-                nodeSep: 50,
+                nodeSep: 1,
                 avoidOverlap: true,
                 nodeDimensionsIncludeLabels: true,
-                rankDir: 'BT',
-                spacingFactor: 1.3,
+                rankDir: 'TB',
+                spacingFactor: 3,
                 fit: false,
                 padding: 30,
                 infinite: true
@@ -142,20 +142,27 @@ const TechTree = () => {
     const style = [{
         selector: 'node',
         style: {
+            'shape': 'rectangle',
             'label': 'data(label)',
-            'background-color': '#636363',
+            'background-color': '#ffffff',
+            'border-color': '#002fa7',
+            'border-width': '2px',
             'color': '#ffffff',
-            'text-outline-color': '#636363',
+            'text-outline-color': '#002fa7',
             'text-outline-width': '2px',
+            'text-wrap': '',
+            'text-halign': 'center',
+            'text-valign': 'center',
+            'width': '150 px',
 
         }
     }, {
         selector: 'edge',
         style: {
             'curve-style': 'bezier',
-            'target-arrow-shape': 'triangle',
-            'line-color': '#888888',
-            'target-arrow-color': '#888888'
+            'source-arrow-shape': 'triangle',
+            'source-arrow-color': '#888888',
+            'line-color': '#888888'
         }
     }, {
         selector: '.highlighted',
@@ -287,7 +294,7 @@ const TechTree = () => {
                             disableBrowserGestures: false,
                         }
                     );
-                    eh.enableDrawMode();
+                    // eh.enableDrawMode();
                     const options = {
                         // Customize event to bring up the context menu
                         // Possible options https://js.cytoscape.org/#events/user-input-device-events
@@ -381,22 +388,12 @@ const TechTree = () => {
                     //     setCreating(true);
                     // });
                     cy.on('ehcomplete', (event, sourceNode, targetNode, addedEdge) => {
-                        // delete addedEdge from cy
-                        console.log(addedEdge);
+                        // this event is thrown three times for some reason
                         cy.remove(addedEdge);
-                        //todo bug
-                        addEdge(targetNode.id(), sourceNode.id());
-                    });
 
-                    cy.on('tap', function (evt) {
-                        if (evt.target === cy && creating) {
-                            const yPos = evt.position.y;
-                            if (yPos < firstNodePosition.y) {
-                                setNewNodeRelation('target');
-                            } else {
-                                setNewNodeRelation('source');
-                            }
-                        }
+
+                        Number.isInteger(Number(sourceNode.id())) && Number.isInteger(Number(targetNode.id())) && addEdge(sourceNode.id(), targetNode.id());
+
                     });
 
 
