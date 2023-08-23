@@ -122,7 +122,7 @@ const TechTree = () => {
         if (cy && elements.length > 0) {
             const layout = cy.layout({
                 name: 'dagre',
-                animate: true,
+                animate: false,
                 nodeSep: 1,
                 avoidOverlap: true,
                 nodeDimensionsIncludeLabels: true,
@@ -142,7 +142,7 @@ const TechTree = () => {
     const style = [{
         selector: 'node',
         style: {
-            'shape': 'rectangle',
+            'shape': 'round-rectangle',
             'label': 'data(label)',
             'background-color': '#ffffff',
             'border-color': '#002fa7',
@@ -153,7 +153,7 @@ const TechTree = () => {
             'text-wrap': '',
             'text-halign': 'center',
             'text-valign': 'center',
-            'width': '150 px',
+            'width': '200 px',
 
         }
     }, {
@@ -177,7 +177,7 @@ const TechTree = () => {
     {
         selector: '.eh-handle',
         style: {
-            'background-color': 'red',
+            'background-color': 'green',
             'width': 12,
             'height': 12,
             'shape': 'ellipse',
@@ -190,7 +190,7 @@ const TechTree = () => {
     {
         selector: '.eh-hover',
         style: {
-            'background-color': 'red'
+            'background-color': 'green'
         }
     },
 
@@ -198,7 +198,7 @@ const TechTree = () => {
         selector: '.eh-source',
         style: {
             'border-width': 2,
-            'border-color': 'red'
+            'border-color': 'green'
         }
     },
 
@@ -206,17 +206,17 @@ const TechTree = () => {
         selector: '.eh-target',
         style: {
             'border-width': 2,
-            'border-color': 'red'
+            'border-color': 'green'
         }
     },
 
     {
         selector: '.eh-preview, .eh-ghost-edge',
         style: {
-            'background-color': 'red',
-            'line-color': 'red',
-            'target-arrow-color': 'red',
-            'source-arrow-color': 'red'
+            'background-color': 'green',
+            'line-color': 'green',
+            'target-arrow-color': 'green',
+            'source-arrow-color': 'green'
         }
     },
 
@@ -262,7 +262,7 @@ const TechTree = () => {
                 container={cyRef.current}
                 elements={elements}
                 // layout={layout}
-                style={{ width: '2000px', height: '2000px', cursor: cursor }}
+                style={{ width: '1000px', height: '1000px', cursor: cursor }}
                 stylesheet={style}
                 cy={(cy) => {
                     cyRef.current = cy;
@@ -364,6 +364,36 @@ const TechTree = () => {
                                     const target = event.target || event.cyTarget;
                                     console.log('remove ' + target.id());
                                 }
+                            },
+                            // {
+                            //     id: 'highlight-successors',
+                            //     content: 'Highlight Dependencies',
+                            //     tooltipText: 'Highlight Dependencies',
+                            //     selector: 'node',
+                            //     onClickFunction: function (event) {
+                            //         const target = event.target || event.cyTarget;
+                            //         target.successors().addClass('highlighted');
+                            //     }
+                            // },
+                            // {
+                            //     id: 'highlight-predecessors',
+                            //     content: 'Highlight Dependents',
+                            //     tooltipText: 'Highlight Dependents',
+                            //     selector: 'node',
+                            //     onClickFunction: function (event) {
+                            //         const target = event.target || event.cyTarget;
+                            //         target.predecessors().addClass('highlighted');
+                            //     }
+                            // },
+                            {
+                                id: 'select-predecessors',
+                                content: 'Select Dependents',
+                                tooltipText: 'Select Dependents',
+                                selector: 'node',
+                                onClickFunction: function (event) {
+                                    const target = event.target || event.cyTarget;
+                                    target.predecessors().select();
+                                }
                             }
                         ],
                         // css classes that menu items will have
@@ -396,6 +426,17 @@ const TechTree = () => {
 
                     });
 
+                    // on click on background remove all highlights and selctions
+                    cy.on('tap', function (event) {
+                        if (event.target === cy) {
+                            cy.elements().removeClass('highlighted');
+                            cy.elements().unselect();
+                            setCreating(false);
+                            setFirstNode(null);
+                            setCursor('pointer');
+                        }
+                    }
+                    );
 
 
                 }}
