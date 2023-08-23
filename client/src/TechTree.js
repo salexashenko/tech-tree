@@ -245,11 +245,55 @@ const TechTree = () => {
                 }).update(); // Apply the styling updates
             }
 
+
             // Call the function to apply the styling
             applyConditionalStyling(cy);
 
             // set camera position to show all nodes
             cy.fit();
+
+            // let years = [-2000000, -1000000, -100000, -10000, -1000, -500, 1, 500, 1000, 1500, 1600, 1700, 1800, 1900, 2000];
+
+            // let yPositions = years.map(verticalPos);
+
+            // let yLabels = years.map(year => {
+            //     if (year < 0) {
+            //         return `${Math.abs(year).toLocaleString()} BCE`;
+            //     } else if (year === 1) {
+            //         return `1 CE`;
+            //     } else {
+            //         return `${year} CE`;
+            //     }
+            // });
+
+            // for (let i = 0; i < yPositions.length; i++) {
+            //     if (!cy.getElementById('label-' + i).empty()) {
+            //         // Node with this ID already exists, skip adding it
+            //         continue;
+            //     }
+            //     cy.add({
+            //         group: 'nodes',
+            //         data: { id: 'label-' + i, label: yLabels[i] },
+            //         position: { x: 50, y: yPositions[i] }  // assuming X=0 for all Y-axis labels
+            //     });
+            // }
+
+            // // 2. Style the Dummy Nodes
+            // cy.style()
+            //     .selector('node[id ^= "label-"]') // selects nodes with ids that start with "label-"
+            //     .style({
+            //         'background-opacity': 0, // make the node transparent
+            //         'border-opacity': 0,
+            //         'width': 1,
+            //         'height': 1,
+            //         'text-valign': 'center',
+            //         'text-halign': 'right'
+            //     })
+            //     .update();
+
+            // // 3. Lock the Dummy Nodes
+            // cy.nodes('[id ^= "label-"]').lock();
+
 
 
             // // Optional: If you want to make sure edges are redrawn correctly
@@ -282,8 +326,8 @@ const TechTree = () => {
         selector: 'edge',
         style: {
             'curve-style': 'bezier',
-            'source-arrow-shape': 'triangle',
-            'source-arrow-color': '#888888',
+            'target-arrow-shape': 'triangle',
+            'target-arrow-color': '#888888',
             'line-color': '#888888'
         }
     }, {
