@@ -404,5 +404,91 @@
             "mechanized_farming"
         ],
         "year": 1840
+    },
+    {
+        "id": "counting",
+        "label": "Counting",
+        "dependencies": [],
+        "year": -50000
+    },
+    {
+        "id": "tally_marks",
+        "label": "Tally Marks",
+        "dependencies": [
+            "counting"
+        ],
+        "year": -30000
+    },
+    {
+        "id": "numeral_system",
+        "label": "Numeral System",
+        "dependencies": [
+            "counting"
+        ],
+        "year": -5000
+    },
+    {
+        "id": "addition_subtraction",
+        "label": "Addition and Subtraction",
+        "dependencies": [
+            "counting"
+        ],
+        "year": -20000
+    },
+    {
+        "id": "multiplication_division",
+        "label": "Multiplication and Division",
+        "dependencies": [
+            "addition_subtraction"
+        ],
+        "year": -10000
+    },
+    {
+        "id": "measurement",
+        "label": "Measurement",
+        "dependencies": [
+            "counting"
+        ],
+        "year": -15000
+    },
+    {
+        "id": "square_and_circle",
+        "label": "Square and Circle Geometry",
+        "dependencies": [
+            "measurement"
+        ],
+        "year": -4000
+    },
+    {
+        "id": "fractions",
+        "label": "Fractions",
+        "dependencies": [
+            "multiplication_division"
+        ],
+        "year": -2500
+    },
+    {
+        "id": "square_roots",
+        "label": "Square Roots",
+        "dependencies": [
+            "square_and_circle"
+        ],
+        "year": -1500
+    },
+    {
+        "id": "equations",
+        "label": "Equations",
+        "dependencies": [
+            "square_and_circle"
+        ],
+        "year": -1800
+    },
+    {
+        "id": "sine_cosine",
+        "label": "Sine and Cosine",
+        "dependencies": [
+            "square_and_circle"
+        ],
+        "year": -1500
     }
 ]
