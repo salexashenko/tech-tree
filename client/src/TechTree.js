@@ -98,7 +98,7 @@ const TechTree = () => {
                 const edgeResponse = await axios.get('/api/edges');
 
                 const nodeData = nodeResponse.data.map(node => ({
-                    data: { id: node.id, label: node.label },
+                    data: { id: node.id, label: node.label, year: node.year },
                     // position: { y: 3.0 * Math.log10(node.year + 1760001) }
                 }));
 
@@ -134,6 +134,128 @@ const TechTree = () => {
 
             });
             layout.run();
+            cy.layout({
+                name: 'dagre'
+            }).run();
+
+            function verticalPos(x) {
+                // Return ~6000 for x <= -2000000
+                if (x <= -2000000) {
+                    return 6000;
+                }
+
+                // Between -2000000 and -100000
+                else if (-2000000 < x && x <= -100000) {
+                    return 6000 - 100 * ((x + 2000000) / 1000000);
+                }
+
+                // Between -100000 and -10000
+                else if (-100000 < x && x <= -10000) {
+                    return 5800 - 100 * ((x + 100000) / 10000);
+                }
+
+                // Between -10000 and -1000
+                else if (-10000 < x && x <= -1000) {
+                    return 5700 - 100 * ((x + 10000) / 1000);
+                }
+
+                // Between -1000 and 1500
+                else if (-1000 < x && x <= 1500) {
+                    return 5500 - 100 * ((x + 1000) / 100);
+                }
+
+                // Between 1500 and 1900
+                else if (1500 < x && x <= 1900) {
+                    return 5000 - 100 * ((x - 1500) / 50);
+                }
+
+                // Above 1900
+                else {
+                    return 4800 - 100 * ((x - 1900) / 10);
+                }
+            }
+
+
+            cy.nodes().forEach(node => {
+                let year = node.data('year');
+                let yPos = verticalPos(year);
+                node.position({
+                    y: yPos
+                });
+            });
+
+            const NODE_WIDTH = 200;
+            const NODE_HEIGHT = 50;
+            const X_MARGIN = 50;
+            const Y_MARGIN = 50;
+
+            const MIN_X_DISTANCE = NODE_WIDTH + X_MARGIN;
+            const MIN_Y_DISTANCE = NODE_HEIGHT + Y_MARGIN;
+
+            // Sort nodes by y-position
+            let sortedNodes = cy.nodes().sort((a, b) => {
+                return a.position('y') - b.position('y');
+            });
+
+            let isOverlapping = (nodeA, nodeB) => {
+                let posA = nodeA.position();
+                let posB = nodeB.position();
+
+                let xOverlap = Math.abs(posA.x - posB.x) < MIN_X_DISTANCE;
+                let yOverlap = Math.abs(posA.y - posB.y) < MIN_Y_DISTANCE;
+
+                return xOverlap && yOverlap;
+            };
+
+            let adjustPositions = true;
+
+            while (adjustPositions) {
+                adjustPositions = false;
+
+                for (let i = 0; i < sortedNodes.length; i++) {
+                    for (let j = i + 1; j < sortedNodes.length; j++) {
+                        let nodeA = sortedNodes[i];
+                        let nodeB = sortedNodes[j];
+
+                        while (isOverlapping(nodeA, nodeB)) {
+                            // Move nodeB to the right
+                            nodeB.position({
+                                x: nodeB.position('x') + MIN_X_DISTANCE
+                            });
+                            adjustPositions = true;
+                        }
+                    }
+                }
+            }
+            function applyConditionalStyling(cy) {
+                cy.style().selector('node').style({
+                    'border-color': function (node) {
+                        let year = node.data('year');
+
+                        if (year < -2000) {
+                            return '#808080';
+                        } else if (year >= -2000 && year < -700) {
+                            return '#cd7f32';
+                        } else if (year >= -700 && year <= 1500) {
+                            return '#434b4d';
+                        } else {
+                            return '#002fa7';
+                        }
+                    }
+                }).update(); // Apply the styling updates
+            }
+
+            // Call the function to apply the styling
+            applyConditionalStyling(cy);
+
+            // set camera position to show all nodes
+            cy.fit();
+
+
+            // // Optional: If you want to make sure edges are redrawn correctly
+            // cy.edges().forEach(edge => {
+            //     edge.rerender();
+            // });
         }
     }, [elements]);
 
