@@ -8,7 +8,7 @@
     "install:backend": "npm install",
     "install:frontend": "cd client && npm install",
     "postinstall": "npm run install:backend && npm run install:frontend",
-    "build:backend": "echo 'Build backend here'",
+    "build:backend": "npm install",
     "build:frontend": "cd client && npm run build",
     "build": "npm run build:backend && npm run build:frontend",
     "start:backend": "node server.js",
