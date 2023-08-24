@@ -108,6 +108,40 @@ const TechTree = () => {
         }
     };
 
+    const removeEdge = async (edge) => {
+        const edgeData = edge._private.data;
+        console.log(edgeData);
+        const edgeId = edgeData.id.slice(4);
+        try {
+            const response = await axios.delete(`/api/edges/${edgeId}`);
+            fetchData();
+        } catch (error) {
+            console.error('Error deleting edge:', error);
+        }
+    };
+
+    const removeNode = async (node) => {
+        try {
+            const nodeData = node._private.data;
+            console.log(nodeData);
+            // First, delete all edges connected to the node
+            const response = await axios.get('/api/edges');
+            const edges = response.data;
+            edges.forEach(edge => {
+                if (edge.source_node_id === node.id || edge.target_node_id === Number(nodeData.id)) {
+                    removeEdge(edge);
+                }
+            });
+            const response2 = await axios.delete(`/api/nodes/${nodeData.id}`);
+            fetchData();
+
+
+        } catch (error) {
+            console.error('Error deleting node:', error);
+        }
+    };
+
+
 
     const addNode = async (label, year) => {
         try {
@@ -144,27 +178,28 @@ const TechTree = () => {
         }
     }, [token]);
 
+    const fetchData = async () => {
+        try {
+            const nodeResponse = await axios.get('/api/nodes');
+            console.log('ding');
+            const edgeResponse = await axios.get('/api/edges');
+            console.log('dong');
+
+            const nodeData = nodeResponse.data.map(node => ({
+                data: { id: node.id, label: node.label, year: node.year },
+            }));
+
+            const edgeData = edgeResponse.data.map(edge => ({
+                data: { id: `edge${edge.id}`, target: edge.target_node_id, source: edge.source_node_id }
+            }));
+            setElements([...nodeData, ...edgeData,]);
+        } catch (error) {
+            console.log('The witch is dead', error);
+        }
+    };
+
     useEffect(() => {
         const cy = cyRef.current;
-        const fetchData = async () => {
-            try {
-                const nodeResponse = await axios.get('/api/nodes');
-                console.log('ding');
-                const edgeResponse = await axios.get('/api/edges');
-                console.log('dong');
-
-                const nodeData = nodeResponse.data.map(node => ({
-                    data: { id: node.id, label: node.label, year: node.year },
-                }));
-
-                const edgeData = edgeResponse.data.map(edge => ({
-                    data: { id: `edge${edge.id}`, target: edge.target_node_id, source: edge.source_node_id }
-                }));
-                setElements([...nodeData, ...edgeData,]);
-            } catch (error) {
-                console.log('The witch is dead', error);
-            }
-        };
 
         fetchData();
     }, []);
@@ -572,8 +607,15 @@ const TechTree = () => {
                                 tooltipText: 'Remove',
                                 selector: 'node, edge',
                                 onClickFunction: function (event) {
-                                    const target = event.target || event.cyTarget;
-                                    console.log('remove ' + target.id());
+                                    const target = event.target;
+                                    if (target.isNode()) {
+                                        // Get the data of the node
+                                        const nodeData = target.data();
+                                        removeNode(target);
+                                    }
+                                    else {
+                                        removeEdge(target);
+                                    }
                                 }
                             },
                             // {
@@ -597,13 +639,19 @@ const TechTree = () => {
                             //     }
                             // },
                             {
-                                id: 'select-predecessors',
-                                content: 'Select Dependents',
-                                tooltipText: 'Select Dependents',
+                                id: 'select-branch',
+                                content: 'Select Branch',
+                                tooltipText: 'Select Branch',
                                 selector: 'node',
                                 onClickFunction: function (event) {
                                     const target = event.target || event.cyTarget;
+                                    target.select()
                                     target.predecessors().select();
+                                    target.successors().select();
+                                    target.addClass('highlighted');
+                                    target.predecessors().addClass('highlighted');
+                                    target.successors().addClass('highlighted');
+
                                 }
                             }
                         ],
