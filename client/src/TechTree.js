@@ -4,8 +4,12 @@ import contextMenus from 'cytoscape-context-menus';
 import dagre from 'cytoscape-dagre';
 import edgehandles from 'cytoscape-edgehandles';
 import React, { useContext, useEffect, useState } from 'react';
+import { Button, Form } from 'react-bootstrap';
 import CytoscapeComponent from 'react-cytoscapejs';
+import { Overlay } from 'react-overlays';
 import { TokenContext } from './Home';
+import './TechTree.css';
+
 
 
 
@@ -19,14 +23,65 @@ cytoscape.use(contextMenus);
 const TechTree = () => {
     const cyRef = React.useRef();
     const [elements, setElements] = useState([]);
-    const [creating, setCreating] = useState(false);
     const [firstNode, setFirstNode] = useState(null);
-    const [newNodeInfo, setNewNodeInfo] = useState({ label: '', year: 0 });
-    const [firstNodePosition, setFirstNodePosition] = useState(null);
-    const [newNodeRelation, setNewNodeRelation] = useState(null); // can be 'source' or 'target'
     const token = useContext(TokenContext); // Assuming you're using Context API to store the token
     const [creatingEdge, setCreatingEdge] = useState(false);
     const [cursor, setCursor] = useState('pointer');
+
+    const [show, setShow] = useState(false);
+    const [target, setTarget] = useState(null);
+    const [formData, setFormData] = useState({
+        name: '',
+        year: '',
+        parentTech: 'None',
+        childTech: 'None'
+    });
+    const [parentTechFilter, setParentTechFilter] = useState('');
+    const [childTechFilter, setChildTechFilter] = useState('');
+
+    const handleClick = (event) => {
+        setShow(!show);
+        setTarget(event.target);
+    };
+    const handleDone = () => {
+        setShow(false);
+        // API call to create a new node
+        if (formData.name === '') {
+            alert('Please enter a name');
+            return;
+        }
+        if (!Number.isInteger(Number(formData.year))) {
+            alert('Please enter a proper year');
+            return;
+        }
+        if (formData.parentTech === formData.childTech && formData.parentTech === 'None') {
+            alert('Please select a parent or child tech');
+            return;
+        }
+        if (formData.parentTech === formData.childTech) {
+            alert('Please select different parent and child techs');
+            return;
+        }
+        addNode(formData.name, formData.year).then((newNodeId) => {
+            // If the user selected a parent tech, create an edge between the new node and the parent tech. Remember
+            console.log(formData.parentTech);
+            console.log(formData.childTech);
+            console.log(label2id(formData.parentTech));
+            console.log(label2id(formData.childTech));
+            (formData.parentTech !== 'None') && addEdge(label2id(formData.parentTech), newNodeId);
+            // If the user selected a child tech, create an edge between the new node and the child tech
+            (formData.childTech !== 'None') && addEdge(newNodeId, label2id(formData.childTech));
+        });
+    };
+
+
+
+
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevState => ({ ...prevState, [name]: value }));
+    };
 
     const addEdge = async (source, target) => {
         try {
@@ -54,7 +109,7 @@ const TechTree = () => {
     };
 
 
-    const addNode = async (label, year, position) => {
+    const addNode = async (label, year) => {
         try {
             // Send POST request to create a new node
             const response = await axios.post('/api/nodes', {
@@ -71,7 +126,6 @@ const TechTree = () => {
                     id: newNode.id,
                     label: newNode.label
                 },
-                position: position
             };
 
             // Update the elements state with the new node
@@ -95,28 +149,42 @@ const TechTree = () => {
         const fetchData = async () => {
             try {
                 const nodeResponse = await axios.get('/api/nodes');
+                console.log('ding');
                 const edgeResponse = await axios.get('/api/edges');
+                console.log('dong');
 
                 const nodeData = nodeResponse.data.map(node => ({
                     data: { id: node.id, label: node.label, year: node.year },
-                    // position: { y: 3.0 * Math.log10(node.year + 1760001) }
                 }));
 
                 const edgeData = edgeResponse.data.map(edge => ({
                     data: { id: `edge${edge.id}`, target: edge.target_node_id, source: edge.source_node_id }
                 }));
-
-
                 setElements([...nodeData, ...edgeData,]);
             } catch (error) {
-                console.log('Error fetching data', error);
+                console.log('The witch is dead', error);
             }
         };
 
         fetchData();
     }, []);
 
-
+    // console.log(elements);
+    // only show techs where a label exists
+    let filteredElements = elements.filter((e) => e.data.label);
+    let filteredParentTechs = filteredElements.filter((e) => e.data.label.toLowerCase().includes(parentTechFilter.toLowerCase()));
+    let filteredChildTechs = filteredElements.filter((e) => e.data.label.toLowerCase().includes(childTechFilter.toLowerCase()));
+    console.log(filteredParentTechs);
+    const label2id = (label) => {
+        let id = null;
+        elements.forEach((element) => {
+            // this will throw an error if the label is null so make sure to skip elements with null labels
+            if (element.data.label && element.data.label.toLowerCase() === label.toLowerCase()) {
+                id = element.data.id;
+            }
+        });
+        return id;
+    };
     useEffect(() => {
         const cy = cyRef.current;
         if (cy && elements.length > 0) {
@@ -395,52 +463,73 @@ const TechTree = () => {
 
     return (
         <div>
-            <h1>Tech Tree</h1>
-            {creating && newNodeRelation && (
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Label"
-                        value={newNodeInfo.label}
-                        onChange={(e) => setNewNodeInfo({ ...newNodeInfo, label: e.target.value })}
-                    />
-                    <input
-                        type="number"
-                        placeholder="Year"
-                        value={newNodeInfo.year}
-                        onChange={(e) => setNewNodeInfo({ ...newNodeInfo, year: parseInt(e.target.value, 10) })}
-                    />
-                    <button onClick={async () => {
-                        const newNode = await addNode(newNodeInfo.label, newNodeInfo.year);
-                        if (newNode) { // Ensure the node was actually created
-                            await addEdge(
-                                (newNodeRelation === 'source') ? firstNode : newNode,
-                                (newNodeRelation === 'source') ? newNode : firstNode
-                            );
-                        }
-                        setCreating(false);
-                        setFirstNode(null);
-                        setNewNodeInfo({ label: '', year: '0' });
-                    }}>Add Node</button>
-                </div>
-            )}
+            <p></p>
+            <div>
+                <Button onClick={handleClick} style={{ backgroundColor: '#ffffff', borderColor: '#002fa7', borderRadius: '4px' }}>
+                    Add Technology
+                </Button>
+
+                <Overlay show={show} target={target} placement="bottom">
+                    {({ props, arrowProps }) => (
+                        <div {...props} className="custom-overlay">
+                            <div {...arrowProps} className="custom-arrow" />
+                            <Form>
+                                <Form.Group controlId="name">
+                                    <Form.Label>Name</Form.Label>
+                                    <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} />
+                                </Form.Group>
+                                <Form.Group controlId="year">
+                                    <Form.Label>Year</Form.Label>
+                                    <Form.Control type="text" name="year" value={formData.year} onChange={handleChange} />
+                                </Form.Group>
+
+                                <Form.Group controlId="parentTech">
+                                    <Form.Label>Parent Tech    </Form.Label>
+                                    {/* <Form.Control type="text" placeholder="Start typing to filter..." onChange={(e) => setParentTechFilter(e.target.value)} /> */}
+                                    <Form.Control as="select" name="parentTech" value={formData.parentTech} onChange={handleChange}>
+                                        <option value="None">None</option>
+                                        {filteredParentTechs.map((tech, index) => (
+                                            <option key={index} value={tech.data.label}>{tech.data.label}</option>
+                                        ))}
+                                    </Form.Control>
+
+                                </Form.Group>
+
+                                <Form.Group controlId="childTech">
+                                    <Form.Label>Child Tech    </Form.Label>
+                                    {/* <Form.Control type="text" placeholder="Start typing to filter..." onChange={(e) => setChildTechFilter(e.target.value)} /> */}
+                                    <Form.Control as="select" name="childTech" value={formData.childTech} onChange={handleChange}>
+                                        <option value="None">None</option>
+                                        {filteredChildTechs.map((tech, index) => (
+                                            <option key={index} value={tech.data.label}>{tech.data.label}</option>
+                                        ))}
+                                    </Form.Control>
+
+                                </Form.Group>
+
+                                <Button onClick={handleDone} style={{ backgroundColor: '#ffffff', borderColor: '#002fa7', borderRadius: '4px' }}>
+                                    Done
+                                </Button>
+                            </Form>
+                        </div>
+                    )}
+                </Overlay>
+            </div >
             <CytoscapeComponent
                 container={cyRef.current}
                 elements={elements}
                 // layout={layout}
-                style={{ width: '1000px', height: '1000px', cursor: cursor }}
+                style={{ width: '1000px', height: '1000px', cursor: cursor, border: '1px solid #002fa7' }}
                 stylesheet={style}
                 cy={(cy) => {
                     cyRef.current = cy;
                     cy.on('tap', 'node', function (evt) {
                         if (creatingEdge === 'parent') {
                             addEdge(firstNode, evt.target.id());
-                            setCreatingEdge(false);
                             setFirstNode(null);
                             setCursor('pointer');
                         } else if (creatingEdge === 'child') {
                             addEdge(evt.target.id(), firstNode);
-                            setCreatingEdge(false);
                             setFirstNode(null);
                             setCursor('pointer');
                         } else {
@@ -468,50 +557,6 @@ const TechTree = () => {
                         // List of initial menu items
                         // A menu item must have either onClickFunction or submenu or both
                         menuItems: [
-                            {
-                                id: 'add-child-node',
-                                content: 'Add New Child Tech',
-                                tooltipText: 'Add New Child Tech',
-                                selector: 'node',
-                                onClickFunction: function (event) {
-                                    const target = event.target || event.cyTarget;
-                                    console.log('add child node to ' + target.id());
-                                }
-                            },
-                            {
-                                id: 'add-parent-node',
-                                content: 'Add New Parent Tech',
-                                tooltipText: 'Add New Parent Tech',
-                                selector: 'node',
-                                onClickFunction: function (event) {
-                                    const target = event.target || event.cyTarget;
-                                    console.log('add parent node to ' + target.id());
-                                }
-                            },
-                            {
-                                id: 'add-child-edge',
-                                content: 'Link to Child Tech',
-                                tooltipText: 'Link to Child Tech',
-                                selector: 'node',
-                                onClickFunction: function (event) {
-                                    const target = event.target || event.cyTarget;
-                                    setCreatingEdge('child');
-                                    setCursor('crosshair');
-                                    setFirstNode(target.id());
-                                }
-                            },
-                            {
-                                id: 'add-parent-edge',
-                                content: 'Link to Parent Tech',
-                                tooltipText: 'Link to Parent Tech',
-                                selector: 'node',
-                                onClickFunction: function (event) {
-                                    const target = event.target || event.cyTarget;
-                                    setCreatingEdge('parent');
-                                    setCursor('crosshair');
-                                    setFirstNode(target.id());
-                                }
-                            },
                             {
                                 id: 'draw-eh-link',
                                 content: 'Draw Link',
@@ -597,9 +642,6 @@ const TechTree = () => {
                         if (event.target === cy) {
                             cy.elements().removeClass('highlighted');
                             cy.elements().unselect();
-                            setCreating(false);
-                            setFirstNode(null);
-                            setCursor('pointer');
                         }
                     }
                     );
@@ -607,7 +649,7 @@ const TechTree = () => {
 
                 }}
             />
-        </div>
+        </div >
     );
 };
 

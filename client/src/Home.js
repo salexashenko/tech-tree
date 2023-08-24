@@ -34,7 +34,7 @@ const Home = () => {
         <div>
             <TokenContext.Provider value={token}>
                 {token ? (
-                    <h1>{username} logged in</h1>
+                    <h4>{username} logged in</h4>
                 ) : (
                     <>
                         <Login setToken={setToken} setUsername={setUsername} />
