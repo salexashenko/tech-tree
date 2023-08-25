@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Login from './Login';
-import Signup from './Signup';
 import TechTree from './TechTree';
 const TokenContext = React.createContext();
 const Home = () => {
@@ -38,7 +37,8 @@ const Home = () => {
                 ) : (
                     <>
                         <Login setToken={setToken} setUsername={setUsername} />
-                        <Signup setToken={setToken} setUsername={setUsername} />
+                        {/* <b>Or Sign up, it's your life</b>
+                        <Signup setToken={setToken} setUsername={setUsername} /> */}
 
                     </>
                 )}
