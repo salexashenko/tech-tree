@@ -41,7 +41,6 @@ const TechTree = () => {
 
     const handleClick = (event) => {
         setShow(!show);
-        setTarget(event.target);
     };
     const handleDone = () => {
         setShow(false);
@@ -500,14 +499,21 @@ const TechTree = () => {
         <div>
             <p></p>
             <div>
-                <Button onClick={handleClick} style={{ backgroundColor: '#ffffff', borderColor: '#002fa7', borderRadius: '4px' }}>
+                {/* <Button onClick={handleClick} style={{ backgroundColor: '#ffffff', borderColor: '#002fa7', borderRadius: '4px' }}>
                     Add Technology
-                </Button>
+                </Button> */}
 
-                <Overlay show={show} target={target} placement="bottom">
+                <Overlay show={show} placement="top">
                     {({ props, arrowProps }) => (
-                        <div {...props} className="custom-overlay">
-                            <div {...arrowProps} className="custom-arrow" />
+                        <div {...props} className="custom-overlay" style={{
+                            ...props.style,
+                            position: 'fixed', // Use 'fixed' or 'absolute'
+                            top: '50%', // Center vertically
+                            left: '50%', // Center horizontally
+                            transform: 'translate(-50%, -50%)', // Necessary adjustments for centering
+                            zIndex: 999 // Optional: to ensure the overlay is above other elements
+                        }}>
+                            <div {...arrowProps} className="custom-arrow" style={{ ...arrowProps.style, zIndex: 1000 }} />
                             <Form>
                                 <Form.Group controlId="name">
                                     <Form.Label>Name</Form.Label>
@@ -544,6 +550,10 @@ const TechTree = () => {
 
                                 <Button onClick={handleDone} style={{ backgroundColor: '#ffffff', borderColor: '#002fa7', borderRadius: '4px' }}>
                                     Done
+                                </Button>
+                                <p></p>
+                                <Button onClick={handleClick} style={{ backgroundColor: '#ffffff', borderColor: '#002fa7', borderRadius: '4px' }}>
+                                    Cancel
                                 </Button>
                             </Form>
                         </div>
@@ -653,7 +663,16 @@ const TechTree = () => {
                                     target.successors().addClass('highlighted');
 
                                 }
-                            }
+                            },
+                            {
+                                id: 'create-tech',
+                                content: 'Create Technology',
+                                tooltipText: 'Create Technology',
+                                // selector - neither node nor edge
+                                coreAsWell: true,
+                                onClickFunction: handleClick,
+                            },
+
                         ],
                         // css classes that menu items will have
                         menuItemClasses: [
