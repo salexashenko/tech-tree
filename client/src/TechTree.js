@@ -27,7 +27,6 @@ const TechTree = () => {
     const token = useContext(TokenContext); // Assuming you're using Context API to store the token
     const [creatingEdge, setCreatingEdge] = useState(false);
     const [cursor, setCursor] = useState('pointer');
-
     const [show, setShow] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -172,7 +171,6 @@ const TechTree = () => {
     };
     useEffect(() => {
         if (token) {
-            console.log(token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         } else {
             delete axios.defaults.headers.common['Authorization'];
@@ -288,8 +286,8 @@ const TechTree = () => {
                 });
             });
 
-            const NODE_WIDTH = 200;
-            const NODE_HEIGHT = 50;
+            const NODE_WIDTH = 400;
+            const NODE_HEIGHT = 100;
             const X_MARGIN = 50;
             const Y_MARGIN = 50;
 
@@ -422,19 +420,21 @@ const TechTree = () => {
             'background-color': '#ffffff',
             'border-color': '#002fa7',
             'border-width': '2px',
-            'color': '#ffffff',
-            'text-outline-color': '#002fa7',
-            'text-outline-width': '2px',
-            'text-wrap': '',
+            'color': '#002fa7',
+            // 'text-outline-color': '#002fa7',
+            // 'text-outline-width': '2px',
+            'font-size': '30px',
+            'font-weight': 'bold',
             'text-halign': 'center',
             'text-valign': 'center',
-            'width': '200 px',
+            'width': '400 px',
+            'height': '100 px',
 
         }
     }, {
         selector: 'edge',
         style: {
-            'curve-style': 'bezier',
+            'curve-style': 'unbundled-bezier',
             'target-arrow-shape': 'triangle',
             'target-arrow-color': '#888888',
             'line-color': '#888888'
