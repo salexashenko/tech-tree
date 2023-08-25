@@ -241,40 +241,65 @@ const TechTree = () => {
             }).run();
 
             function verticalPos(x) {
-                // Return ~6000 for x <= -2000000
-                if (x <= -2000000) {
-                    return 6000;
-                }
 
-                // Between -2000000 and -100000
-                else if (-2000000 < x && x <= -100000) {
-                    return 6000 - 100 * ((x + 2000000) / 1000000);
+                if (x >= 2023) {
+                    return 0;
                 }
-
-                // Between -100000 and -10000
-                else if (-100000 < x && x <= -10000) {
-                    return 5800 - 100 * ((x + 100000) / 10000);
+                else if (x >= 1903) {
+                    return 100 * (2023 - x) / 10;
+                    // so at 1903 we are at 1200
                 }
-
-                // Between -10000 and -1000
-                else if (-10000 < x && x <= -1000) {
-                    return 5700 - 100 * ((x + 10000) / 1000);
+                else if (x >= 1503) {
+                    return 1200 + 100 * (1903 - x) / 50;
+                    // so at 1503 we are at 2000
                 }
-
-                // Between -1000 and 1500
-                else if (-1000 < x && x <= 1500) {
-                    return 5500 - 100 * ((x + 1000) / 100);
+                else if (x >= -997) {
+                    return 2000 + 100 * (1503 - x) / 100;
+                    // so at -1003 we are at 4500
                 }
-
-                // Between 1500 and 1900
-                else if (1500 < x && x <= 1900) {
-                    return 5000 - 100 * ((x - 1500) / 50);
+                else if (x >= -14997) {
+                    return 4500 + 100 * (-997 - x) / 1000;
+                    // so at -14997 we are at 5900
                 }
-
-                // Above 1900
                 else {
-                    return 4800 - 100 * ((x - 1900) / 10);
+                    return 5900 + 100 * (-9997 - x) / 100000;
                 }
+
+
+                // // Return ~6000 for x <= -2000000
+                // if (x <= -2000000) {
+                //     return 6000;
+                // }
+
+                // // Between -2000000 and -100000
+                // else if (-2000000 < x && x <= -100000) {
+                //     return 6000 - 100 * ((x + 2000000) / 1000000);
+                // }
+
+                // // Between -100000 and -10000
+                // else if (-100000 < x && x <= -10000) {
+                //     return 5800 - 100 * ((x + 100000) / 10000);
+                // }
+
+                // // Between -10000 and -1000
+                // else if (-10000 < x && x <= -1000) {
+                //     return 5700 - 100 * ((x + 10000) / 1000);
+                // }
+
+                // // Between -1000 and 1500
+                // else if (-1000 < x && x <= 1500) {
+                //     return 5500 - 100 * ((x + 1000) / 100);
+                // }
+
+                // // Between 1500 and 1900
+                // else if (1500 < x && x <= 1900) {
+                //     return 5000 - 100 * ((x - 1500) / 50);
+                // }
+
+                // // Above 1900
+                // else {
+                //     return 4800 - 100 * ((x - 1900) / 10);
+                // }
             }
 
 
