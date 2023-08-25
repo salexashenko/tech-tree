@@ -596,7 +596,7 @@ const TechTree = () => {
                 container={cyRef.current}
                 elements={elements}
                 // layout={layout}
-                style={{ width: '1000px', height: '1000px', cursor: cursor, border: '1px solid #002fa7' }}
+                style={{ width: '1440px', height: '900px', cursor: cursor, border: '1px solid #002fa7' }}
                 stylesheet={style}
                 cy={(cy) => {
                     cyRef.current = cy;
