@@ -29,7 +29,6 @@ const TechTree = () => {
     const [cursor, setCursor] = useState('pointer');
 
     const [show, setShow] = useState(false);
-    const [target, setTarget] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
         year: '',
@@ -38,6 +37,9 @@ const TechTree = () => {
     });
     const [parentTechFilter, setParentTechFilter] = useState('');
     const [childTechFilter, setChildTechFilter] = useState('');
+
+    const [cyPan, setCyPan] = useState([0, 0]);
+    const [cyZoom, setCyZoom] = useState(1);
 
     const handleClick = (event) => {
         setShow(!show);
@@ -108,11 +110,8 @@ const TechTree = () => {
     };
 
     const removeEdge = async (edge) => {
-        const edgeData = edge._private.data;
-        console.log(edgeData);
-        const edgeId = edgeData.id.slice(4);
         try {
-            const response = await axios.delete(`/api/edges/${edgeId}`);
+            const response = await axios.delete(`/api/edges/${edge}`);
             fetchData();
         } catch (error) {
             console.error('Error deleting edge:', error);
@@ -126,9 +125,12 @@ const TechTree = () => {
             // First, delete all edges connected to the node
             const response = await axios.get('/api/edges');
             const edges = response.data;
+            console.log(edges);
             edges.forEach(edge => {
-                if (edge.source_node_id === node.id || edge.target_node_id === Number(nodeData.id)) {
-                    removeEdge(edge);
+                console.log(nodeData.id);
+                if (edge.source_node_id === Number(nodeData.id) || edge.target_node_id === Number(nodeData.id)) {
+                    console.log(edge);
+                    removeEdge(edge.id);
                 }
             });
             const response2 = await axios.delete(`/api/nodes/${nodeData.id}`);
@@ -353,6 +355,11 @@ const TechTree = () => {
 
             // set camera position to show all nodes
             cy.fit();
+            // if cyfit and cypan are not empty, set camera position to the saved position
+            if (cyPan !== [0, 0] && cyZoom !== 1) {
+                cy.pan(cyPan);
+                cy.zoom(cyZoom);
+            }
 
             // let years = [-2000000, -1000000, -100000, -10000, -1000, -500, 1, 500, 1000, 1500, 1600, 1700, 1800, 1900, 2000];
 
@@ -624,7 +631,10 @@ const TechTree = () => {
                                         removeNode(target);
                                     }
                                     else {
-                                        removeEdge(target);
+                                        const edgeData = target.data();
+                                        console.log(edgeData);
+                                        const edgeId = edgeData.id.slice(4);
+                                        removeEdge(edgeId);
                                     }
                                 }
                             },
@@ -710,6 +720,19 @@ const TechTree = () => {
                             cy.elements().removeClass('highlighted');
                             cy.elements().unselect();
                         }
+                    }
+                    );
+
+                    //record camera position and zoom level to React state
+                    cy.on('zoom', function (event) {
+                        setCyZoom(cy.zoom());
+                        setCyPan(cy.pan());
+                    }
+                    );
+
+                    cy.on('pan', function (event) {
+                        setCyZoom(cy.zoom());
+                        setCyPan(cy.pan());
                     }
                     );
 
