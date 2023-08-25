@@ -700,9 +700,9 @@ const TechTree = () => {
                                 }
                             },
                             {
-                                id: 'create-tech',
-                                content: 'Create Technology',
-                                tooltipText: 'Create Technology',
+                                id: 'add-tech',
+                                content: 'Add Technology',
+                                tooltipText: 'Add Technology',
                                 // selector - neither node nor edge
                                 coreAsWell: true,
                                 onClickFunction: handleClick,
