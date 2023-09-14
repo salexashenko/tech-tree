@@ -1,5 +1,8 @@
 const { Node, Edge } = require('./models');
 const populateDatabase = async () => {
+  // Delete all nodes and edges
+  await Edge.destroy({ where: {} });
+  await Node.destroy({ where: {} });
   // Insert nodes
   const nodes = [
     { label: 'Handaxe', year: -1760000 },
@@ -63,6 +66,27 @@ const populateDatabase = async () => {
     { label: 'Square Roots', year: -1500 },
     { label: 'Equations', year: -1800 },
     { label: 'Sine and Cosine', year: -1500 },
+    { label: 'Decimal System', year: -3100 },
+    { label: 'Zero Concept', year: -2000 },
+    { label: 'Algebra', year: 800 },
+    { label: 'Probability Theory', year: 1654 },
+    { label: 'Analytical Geometry', year: 1637 },
+    { label: 'Calculus', year: 1684 },
+    { label: 'Set Theory', year: 1874 },
+    { label: 'Binary System', year: 1679 },
+    { label: 'Quantum Mechanics', year: 1925 },
+    { label: 'Computer Science', year: 1936 },
+    { label: 'Artificial Intelligence', year: 1956 },
+    { label: 'Internet', year: 1969 },
+    { label: 'World Wide Web', year: 1989 },
+    { label: 'Smartphone', year: 2007 },
+    { label: 'Social Media', year: 1997 },
+    { label: 'Virtual Reality', year: 1968 },
+    { label: 'Augmented Reality', year: 1990 },
+    { label: 'Big Data', year: 2005 },
+    { label: 'Cloud Computing', year: 2006 },
+    { label: 'Internet of Things', year: 1999 },
+    { label: 'Blockchain Technology', year: 2008 }
   ];
   const createdNodes = await Node.bulkCreate(nodes);
 
@@ -149,6 +173,16 @@ const populateDatabase = async () => {
     { target_node_id: nodeMapping['Square Roots'], source_node_id: nodeMapping['Square and Circle Geometry'] },
     { target_node_id: nodeMapping['Equations'], source_node_id: nodeMapping['Square and Circle Geometry'] },
     { target_node_id: nodeMapping['Sine and Cosine'], source_node_id: nodeMapping['Square and Circle Geometry'] },
+    { target_node_id: nodeMapping['Decimal System'], source_node_id: nodeMapping['Numeral System'] },
+    { target_node_id: nodeMapping['Zero Concept'], source_node_id: nodeMapping['Numeral System'] },
+    { target_node_id: nodeMapping['Algebra'], source_node_id: nodeMapping['Equations'] },
+    { target_node_id: nodeMapping['Probability Theory'], source_node_id: nodeMapping['Fractions'] },
+    { target_node_id: nodeMapping['Analytical Geometry'], source_node_id: nodeMapping['Algebra'] },
+    { target_node_id: nodeMapping['Calculus'], source_node_id: nodeMapping['Analytical Geometry'] },
+    { target_node_id: nodeMapping['Set Theory'], source_node_id: nodeMapping['Calculus'] },
+    { target_node_id: nodeMapping['Binary System'], source_node_id: nodeMapping['Decimal System'] },
+    { target_node_id: nodeMapping['Quantum Mechanics'], source_node_id: nodeMapping['Calculus'] },
+    { target_node_id: nodeMapping['Computer Science'], source_node_id: nodeMapping['Set Theory'] }
   ];
   await Edge.bulkCreate(edges);
 };
