@@ -211,7 +211,7 @@ const TechTree = () => {
                 avoidOverlap: true,
                 nodeDimensionsIncludeLabels: true,
                 rankDir: 'TB',
-                spacingFactor: 3,
+                spacingFactor: 2,
                 fit: false,
                 padding: 30,
                 infinite: true
