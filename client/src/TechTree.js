@@ -17,6 +17,7 @@ cytoscape.use(contextMenus);
 
 const TechTree = () => {
     const cyRef = React.useRef();
+    const containerRef = useRef();
     const isCyInitialized = useRef(false);
     const [elements, setElements] = useState([]);
     const token = useContext(TokenContext); // Assuming you're using Context API to store the token
@@ -177,6 +178,64 @@ const TechTree = () => {
 
     useEffect(() => {
         fetchData();
+        const container = containerRef.current;
+        const cy = cyRef.current;
+
+        const handleWheel = (e) => {
+            e.preventDefault(); // Prevent the default browser scrolling
+            const deltaMode = e.deltaMode;
+            const deltaY = e.deltaY;
+            const deltaX = e.deltaX;
+
+            let amountX, amountY;
+
+            if (deltaMode === 1) { // If in line mode (usually when using a touchpad)
+                amountX = deltaX * 10; // Adjust the multiplier as per your sensitivity preferences
+                amountY = deltaY * 10;
+            } else { // If in pixel mode (usually when using a mouse wheel)
+                amountX = deltaX;
+                amountY = deltaY;
+            }
+
+            cy.panBy({ x: -1 * amountX, y: -1 * amountY });
+        };
+
+        container.addEventListener('wheel', handleWheel);
+
+        return () => container.removeEventListener('wheel', handleWheel); // Cleanup the event listener on component unmount
+    }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (!e.metaKey && !e.ctrlKey) return;
+
+            if (e.key === '=' || e.key === '-') {
+                e.preventDefault();
+
+                const factor = e.key === '=' ? 1.5 : 0.75;
+                const currentZoom = cyRef.current.zoom();
+                const newZoom = currentZoom * factor;
+
+                // Get current viewport center
+                const currentCenter = cyRef.current.getCenterPan(newZoom);
+
+                // Temporarily disable panning
+                cyRef.current.panningEnabled(false);
+
+                // Set new zoom and center
+                cyRef.current.viewport({
+                    zoom: newZoom,
+                    pan: currentCenter,
+                });
+
+                // Re-enable panning
+                cyRef.current.panningEnabled(true);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
     useEffect(() => {
@@ -219,7 +278,7 @@ const TechTree = () => {
             });
             console.log('layout');
             layout.run();
-
+            cy.fit();
             function verticalPos(x) {
 
                 if (x >= 2023) {
@@ -320,11 +379,11 @@ const TechTree = () => {
                         let targetYear = edge.target().data('year');
                         if (sourceYear < targetYear) {
                             console.log('sourceYear > targetYear');
-                            return '#8B0000';
+                            return '#002fa7';
                         }
                         else {
                             console.log('sourceYear < targetYear');
-                            return '#002fa7';
+                            return '#8B0000';
                         }
                     }
                 }).update();
@@ -441,6 +500,7 @@ const TechTree = () => {
 
             });
 
+
             // // on click on background remove all highlights and selctions
             // cy.on('tap', function (event) {
             //     if (event.target === cy) {
@@ -451,26 +511,21 @@ const TechTree = () => {
             // );
 
             //record camera position and zoom level to React state
-            cy.on('zoom', function (event) {
-                setCyZoom(cy.zoom());
-                setCyPan(cy.pan());
-            }
-            );
+            // cy.on('zoom', function (event) {
+            //     setCyZoom(cy.zoom());
+            //     setCyPan(cy.pan());
+            // }
+            // );
 
-            cy.on('pan', function (event) {
-                setCyZoom(cy.zoom());
-                setCyPan(cy.pan());
-            }
-            );
+            // cy.on('pan', function (event) {
+            //     setCyZoom(cy.zoom());
+            //     setCyPan(cy.pan());
+            // }
+            // );
 
 
             // set camera position to show all nodes
             cy.fit();
-            // if cyfit and cypan are not empty, set camera position to the saved position
-            if (cyPan !== [0, 0] && cyZoom !== 1) {
-                cy.pan(cyPan);
-                cy.zoom(cyZoom);
-            }
         }
     }, [isReady]);
 
@@ -567,7 +622,7 @@ const TechTree = () => {
     }];
 
     return (
-        <div>
+        <div style={{ width: '100%', height: '100%', overflow: 'auto' }} ref={containerRef}>
             <p></p>
             <div>
                 {/* <Button onClick={handleClick} style={{ backgroundColor: '#ffffff', borderColor: '#002fa7', borderRadius: '4px' }}>
@@ -635,13 +690,17 @@ const TechTree = () => {
                 container={cyRef.current}
                 elements={elements}
                 // layout={layout}
-                style={{ width: '1440px', height: '900px', border: '1px solid #002fa7' }}
+                style={{ width: '100%', height: '100%' }}
                 stylesheet={style}
                 cy={(cy) => {
                     // make sure we only init this once
                     // if (isCyInitialized.current) return;
                     // isCyInitialized.current = true;
                     cyRef.current = cy;
+                    // cy.userPanningEnabled(false);
+                    cy.userZoomingEnabled(false);
+
+
 
                 }}
             />

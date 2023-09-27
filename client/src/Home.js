@@ -30,7 +30,7 @@ const Home = () => {
 
     return (
 
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
             <TokenContext.Provider value={token}>
                 {token ? (
                     <h4>{username} logged in</h4>
@@ -42,7 +42,9 @@ const Home = () => {
 
                     </>
                 )}
-                <TechTree />
+                <div style={{ flexGrow: 1, overflow: 'hidden' }}>
+                    <TechTree />
+                </div>
             </TokenContext.Provider>
         </div>
     );
