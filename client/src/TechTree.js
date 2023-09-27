@@ -8,6 +8,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import CytoscapeComponent from 'react-cytoscapejs';
 import { Overlay } from 'react-overlays';
+import { cytoscapeStyles } from './CytoscapeStyles';
 import { TokenContext } from './Home';
 import './TechTree.css';
 cytoscape.use(dagre);
@@ -531,115 +532,19 @@ const TechTree = () => {
 
 
 
-    const style = [{
-        selector: 'node',
-        style: {
-            'shape': 'round-rectangle',
-            'label': 'data(label)',
-            'background-color': '#ffffff',
-            'border-color': '#002fa7',
-            'border-width': '2px',
-            'color': '#002fa7',
-            // 'text-outline-color': '#002fa7',
-            // 'text-outline-width': '2px',
-            'font-size': '30px',
-            'font-weight': 'bold',
-            'text-halign': 'center',
-            'text-valign': 'center',
-            'width': '400 px',
-            'height': '100 px',
 
-        }
-    }, {
-        selector: 'edge',
-        style: {
-            'curve-style': 'unbundled-bezier',
-            'target-arrow-shape': 'triangle',
-            'target-arrow-color': '#888888',
-            'line-color': '#888888'
-        }
-    }, {
-        selector: '.highlighted',
-        style: {
-            'background-color': '#FFD700',
-            'line-color': '#FFD700',
-            'target-arrow-color': '#FFD700',
-            'color': '#000000',
-            'text-outline-color': '#FFD700'
-        },
-    },
-    {
-        selector: '.eh-handle',
-        style: {
-            'background-color': 'green',
-            'width': 12,
-            'height': 12,
-            'shape': 'ellipse',
-            'overlay-opacity': 0,
-            'border-width': 12, // makes the handle easier to hit
-            'border-opacity': 0
-        }
-    },
-
-    {
-        selector: '.eh-hover',
-        style: {
-            'background-color': 'green'
-        }
-    },
-
-    {
-        selector: '.eh-source',
-        style: {
-            'border-width': 2,
-            'border-color': 'green'
-        }
-    },
-
-    {
-        selector: '.eh-target',
-        style: {
-            'border-width': 2,
-            'border-color': 'green'
-        }
-    },
-
-    {
-        selector: '.eh-preview, .eh-ghost-edge',
-        style: {
-            'background-color': 'green',
-            'line-color': 'green',
-            'target-arrow-color': 'green',
-            'source-arrow-color': 'green'
-        }
-    },
-
-    {
-        selector: '.eh-ghost-edge.eh-preview-active',
-        style: {
-            'opacity': 0
-        }
-    }];
 
     return (
-        <div style={{ width: '100%', height: '100%', overflow: 'auto' }} ref={containerRef}>
+        <div className='tech-tree-parent' ref={containerRef}>
             <p></p>
             <div>
-                {/* <Button onClick={handleClick} style={{ backgroundColor: '#ffffff', borderColor: '#002fa7', borderRadius: '4px' }}>
-                    Add Technology
-                </Button> */}
 
                 <Overlay show={show} placement="top">
                     {({ props, arrowProps }) => (
                         <div {...props} className="custom-overlay" style={{
-                            ...props.style,
-                            position: 'fixed', // Use 'fixed' or 'absolute'
-                            top: '50%', // Center vertically
-                            left: '50%', // Center horizontally
-                            transform: 'translate(-50%, -50%)', // Necessary adjustments for centering
-                            zIndex: 999 // Optional: to ensure the overlay is above other elements
+                            ...props.style
                         }}>
-                            <div {...arrowProps} className="custom-arrow" style={{ ...arrowProps.style, zIndex: 1000 }} />
+                            <div {...arrowProps} className="custom-arrow" style={{ ...arrowProps.style }} />
                             <Form>
                                 <Form.Group controlId="name">
                                     <Form.Label>Name</Form.Label>
@@ -674,11 +579,11 @@ const TechTree = () => {
 
                                 </Form.Group>
 
-                                <Button onClick={handleDone} style={{ backgroundColor: '#ffffff', borderColor: '#002fa7', borderRadius: '4px' }}>
+                                <Button onClick={handleDone} >
                                     Done
                                 </Button>
                                 <p></p>
-                                <Button onClick={handleClick} style={{ backgroundColor: '#ffffff', borderColor: '#002fa7', borderRadius: '4px' }}>
+                                <Button onClick={handleClick} className='button-style'>
                                     Cancel
                                 </Button>
                             </Form>
@@ -691,7 +596,7 @@ const TechTree = () => {
                 elements={elements}
                 // layout={layout}
                 style={{ width: '100%', height: '100%' }}
-                stylesheet={style}
+                stylesheet={cytoscapeStyles}
                 cy={(cy) => {
                     // make sure we only init this once
                     // if (isCyInitialized.current) return;
